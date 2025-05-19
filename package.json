@@ -1,0 +1,12 @@
+{
+  "name": "vanilla-js-poo",
+  "version": "1.0.0",
+  "description": "Coding challenge with vanilla js and poo",
+  "license": "ISC",
+  "author": "lucas ortega",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de alimentos</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <h1>Catálogo de alimentos</h1>
+    <input type="text" id="search" placeholder="Buscar por nombre..." />
+    <input type="number" id="min-price" placeholder="Precio mínimo" />
+    <input type="number" id="max-price" placeholder="Precio máximo" />
+    <select id="stock-filter">
+      <option value="all">Todos</option>
+      <option value="in">Con stock</option>
+      <option value="out">Sin stock</option>
+    </select>
+
+    <div id="food-list"></div>
+    <script type="module" defer src="./app.js"></script>
+  </body>
+</html>
