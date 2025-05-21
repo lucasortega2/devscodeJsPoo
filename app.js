@@ -7,6 +7,8 @@ const searchInput = document.getElementById('search');
 const minPriceInput = document.getElementById('min-price');
 const maxPriceInput = document.getElementById('max-price');
 const stockFilter = document.getElementById('stock-filter');
+const createFoodButton = document.getElementById('create-food');
+createFoodButton.addEventListener('click', () => openEditModal());
 
 function renderFoods(foods) {
   foodList.innerHTML = '';
@@ -41,10 +43,11 @@ function renderFoods(foods) {
     const editBtn = document.createElement('button');
     editBtn.innerHTML = '✏️'; // o '<i class="fa fa-pencil"></i>'
     editBtn.classList.add('edit-btn');
-    editBtn.addEventListener('click', () => updateFood(food));
+    editBtn.addEventListener('click', () => openEditModal(food));
     const deleteBtn = document.createElement('button');
     deleteBtn.innerHTML = '🗑️';
     deleteBtn.classList.add('delete-btn');
+    deleteBtn.addEventListener('click', () => openDeleteModal(food));
 
     actions.append(editBtn, deleteBtn);
     titleRow.append(title, actions);
@@ -117,6 +120,16 @@ function applyFilters() {
   renderFoods(filteredFoods);
 }
 
+function clearEditForm() {
+  editIdInput.value = '';
+  editNameInput.value = '';
+  editIngredientsInput.value = '';
+  editPriceInput.value = '';
+  editStockInput.value = 'true';
+  editRatingInput.value = '1'; 
+  editImageInput.value = '';
+}
+
 searchInput.addEventListener('input', applyFilters);
 minPriceInput.addEventListener('input', applyFilters);
 maxPriceInput.addEventListener('input', applyFilters);
@@ -126,3 +139,112 @@ stockFilter.addEventListener('change', applyFilters);
   await foodManager.getAllFoods();
   applyFilters(); // renderiza con los filtros iniciales
 })();
+
+// Modal elements
+const editModal = document.getElementById('edit-modal');
+const closeBtn = editModal.querySelector('.close');
+const editForm = document.getElementById('edit-form');
+const editIdInput = document.getElementById('edit-id');
+const editNameInput = document.getElementById('edit-name');
+const editIngredientsInput = document.getElementById('edit-ingredients');
+const editPriceInput = document.getElementById('edit-price');
+const editStockInput = document.getElementById('edit-stock');
+const editRatingInput = document.getElementById('edit-rating');
+const editImageInput = document.getElementById('edit-image');
+
+// Delete modal elements
+const deleteModal = document.getElementById('delete-food-modal');
+const cancelDeleteButton = document.getElementById('cancel-delete-button');
+const confirmDeleteButton = document.getElementById('confirm-delete-button');
+let foodToDelete = null;
+// Open modal and populate form with food data
+function openEditModal(food) {
+  if (food) {
+    editIdInput.value = food.id;
+    editNameInput.value = food.name;
+    editIngredientsInput.value = food.ingredients;
+    editPriceInput.value = food.price;
+    editStockInput.value = food.stock.toString();
+    editRatingInput.value = food.rating;
+    editImageInput.value = food.imageUrl;
+  } else {
+    clearEditForm();
+  }
+  editModal.style.display = 'flex';
+}
+
+// Function to open the delete confirmation modal
+function openDeleteModal(food) {
+  foodToDelete = food;
+  deleteModal.style.display = 'flex';
+}
+
+// Close modal when clicking on X
+closeBtn.addEventListener('click', () => {
+  editModal.style.display = 'none';
+});
+
+// Close delete modal when clicking on Cancel
+cancelDeleteButton.addEventListener('click', () => {
+  deleteModal.style.display = 'none';
+  foodToDelete = null;
+});
+
+// Handle delete confirmation
+confirmDeleteButton.addEventListener('click', async () => {
+  if (foodToDelete) {
+    try {
+      await foodManager.deleteFood(foodToDelete.id);
+      deleteModal.style.display = 'none';
+      foodToDelete = null;
+      applyFilters(); // Refresh the food list
+    } catch (error) {
+      console.error('Error al eliminar el alimento:', error);
+      alert('Hubo un error al eliminar la comida. Por favor, inténtalo de nuevo.');
+    }
+  }
+});
+
+// Close modals when clicking outside of them
+window.addEventListener('click', (event) => {
+  if (event.target === editModal) {
+    editModal.style.display = 'none';
+  }
+  if (event.target === deleteModal) {
+    deleteModal.style.display = 'none';
+    foodToDelete = null;
+  }
+});
+
+// Handle form submission
+editForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const id = document.getElementById('edit-id').value;
+  // Create updated food object from form data
+  const food = {
+    id: editIdInput.value,
+    name: editNameInput.value,
+    ingredients: editIngredientsInput.value,
+    price: parseFloat(editPriceInput.value),
+    stock: editStockInput.value === 'true',
+    rating: parseFloat(editRatingInput.value),
+    imageUrl: editImageInput.value,
+  };
+
+  try {
+    if (id) {
+      await foodManager.updateFood(food);
+    } else {
+      await foodManager.addFood(food);
+    }
+    // Close modal and refresh the food list
+    editModal.style.display = 'none';
+    applyFilters();
+    console.log(foodManager.foods);
+  } catch (error) {
+    console.error('Error al actualizar el alimento:', error);
+    alert(
+      'Hubo un error con la carga de la comida. Por favor, inténtalo de nuevo.',
+    );
+  }
+});

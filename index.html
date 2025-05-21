@@ -7,17 +7,87 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <h1>Catálogo de alimentos</h1>
-    <input type="text" id="search" placeholder="Buscar por nombre..." />
-    <input type="number" id="min-price" placeholder="Precio mínimo" />
-    <input type="number" id="max-price" placeholder="Precio máximo" />
-    <select id="stock-filter">
-      <option value="all">Todos</option>
-      <option value="in">Con stock</option>
-      <option value="out">Sin stock</option>
-    </select>
+    <h1>Home Page</h1>
+    <div class="filter-bar">
+      <select id="stock-filter">
+        <option value="all">All</option>
+        <option value="in">In stock</option>
+        <option value="out">Out of stock</option>
+      </select>
+      <div class="price-inputs">
+        <input type="number" id="min-price" placeholder="Min" />
+        <input type="number" id="max-price" placeholder="Max" />
+      </div>
+      <input type="text" id="search" placeholder="Search..." />
+    
+        <button id="create-food">+ </button>
+    </div>
+   
 
     <div id="food-list"></div>
+
+    <!-- Modal para editar alimentos -->
+    <div id="edit-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Update Product</h2>
+        <form id="edit-form">
+          <input type="hidden" id="edit-id" />
+
+          <div class="form-group">
+            <label for="edit-name">Name</label>
+            <input type="text" id="edit-name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-ingredients">Ingredients</label>
+            <input id="edit-ingredients" required></input>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-price">Price</label>
+            <input type="number" id="edit-price" step="0.01" required />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-stock">Stock</label>
+            <select id="edit-stock">
+              <option value="true">In Stock</option>
+              <option value="false">Out of Stock</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-rating">Rating (0-5)</label>
+            <select
+              id="edit-rating"
+              required
+            >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-image">URL of the image</label>
+            <input type="text" id="edit-image" required />
+          </div>
+
+          <button type="submit" class="submit-btn">Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
+    <div id="delete-food-modal" class="modal">
+      <div>
+        <h3>¿Are you sure you want to delete this item?</h3>
+        <button id="cancel-delete-button">Cancel</button>
+        <button id="confirm-delete-button">Delete</button>
+      </div>
+    </div>
+
     <script type="module" defer src="./app.js"></script>
   </body>
 </html>

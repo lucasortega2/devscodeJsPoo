@@ -2,6 +2,7 @@ import {
   createFood,
   deleteFood as deleteFoodFromApi,
   fetchFoods,
+  updateFood as updateFoodFromApi,
 } from './db.js';
 
 export class FoodManager {
@@ -30,24 +31,23 @@ export class FoodManager {
       return matchSearch && matchPrice && matchStock;
     });
   }
-  addFood(foodData) {
-    const newFood = createFood(foodData);
+  async addFood(foodData) {
+    const newFood = await createFood(foodData);
     this.foods.push(newFood);
   }
 
   async updateFood(food) {
-    const updatedFood = updateFood(food);
-    this.foods = this.foods.map((food) =>
-      food.id === updatedFood.id ? updatedFood : food,
+    const updatedFood = await updateFoodFromApi(food);
+
+    this.foods = this.foods.map((item) =>
+      item.id === updatedFood.id ? updatedFood : item,
     );
   }
 
   async deleteFood(id) {
     try {
       const isDeleted = await deleteFoodFromApi(id);
-      if (isDeleted) {
-        this.foods = this.foods.filter((food) => food.id !== id);
-      }
+      this.foods = this.foods.filter((food) => food.id !== id)
     } catch (error) {
       console.error(error);
     }
